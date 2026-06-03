@@ -1,0 +1,58 @@
+[
+  {
+    "id": "T-1001",
+    "subject": "Can't log in - forgot my password",
+    "body": "Hi, I haven't logged in for a while and I can't remember my password. How do I reset it? Thanks!",
+    "customer_plan": "pro",
+    "_expected": "AUTO_RESOLVE — clean FAQ, positive/neutral, strong KB match (KB-001)"
+  },
+  {
+    "id": "T-1002",
+    "subject": "I was charged twice this month??",
+    "body": "I just looked at my statement and it looks like I got billed two times. Can you explain what's going on with my billing cycle and the charges?",
+    "customer_plan": "pro",
+    "_expected": "DRAFT_REPLY — billing question, neutral, good KB match (KB-002)"
+  },
+  {
+    "id": "T-1003",
+    "subject": "This is unacceptable - I want my money back NOW",
+    "body": "I've been charged for a renewal I never wanted and your product has been broken for me all week. This is ridiculous, refund me immediately.",
+    "customer_plan": "pro",
+    "_expected": "ESCALATE — refund (human-only) + angry sentiment guardrails fire"
+  },
+  {
+    "id": "T-1004",
+    "subject": "URGENT: production is down, getting 500 errors on the API",
+    "body": "Our integration just started failing with 500 errors and timeouts. This is affecting our production environment right now. Please help ASAP.",
+    "customer_plan": "enterprise",
+    "_expected": "ESCALATE — urgent priority guardrail fires (even though KB-011 matches)"
+  },
+  {
+    "id": "T-1005",
+    "subject": "How do I set up webhooks?",
+    "body": "I'd like my server to be notified when events happen in my account. Is it possible to configure webhooks, and how do I verify they're really from you?",
+    "customer_plan": "enterprise",
+    "_expected": "AUTO_RESOLVE / DRAFT_REPLY — product question, strong match (KB-008)"
+  },
+  {
+    "id": "T-1006",
+    "subject": "I think my account was hacked",
+    "body": "I got an email saying my password was changed but it wasn't me. I'm worried someone has access to my account. What should I do?",
+    "customer_plan": "free",
+    "_expected": "ESCALATE — security category is human-only"
+  },
+  {
+    "id": "T-1007",
+    "subject": "Feature request: dark mode",
+    "body": "Love the product! It would be great if you could add a dark mode for the web app. Just a suggestion, thanks for the great work.",
+    "customer_plan": "pro",
+    "_expected": "ESCALATE/DRAFT — feature_request, positive, but no strong KB match -> routed to human"
+  },
+  {
+    "id": "T-1008",
+    "subject": "How do I export all my data?",
+    "body": "We need a backup of everything in our account for compliance. Can I download all of my data, and in what format?",
+    "customer_plan": "enterprise",
+    "_expected": "AUTO_RESOLVE / DRAFT_REPLY — product question, strong match (KB-009)"
+  }
+]

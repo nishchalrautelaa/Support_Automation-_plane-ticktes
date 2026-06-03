@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Support Automation — Demo</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel-2:#1d212b; --line:#2a2f3a;
+    --txt:#e7eaf0; --muted:#9aa3b2; --faint:#6b7384;
+    --accent:#7c6cff; --accent-2:#a78bfa;
+    --green:#2fbf71; --green-bg:rgba(47,191,113,.12);
+    --amber:#e0a23b; --amber-bg:rgba(224,162,59,.12);
+    --red:#e5575f;   --red-bg:rgba(229,87,95,.12);
+    --blue:#4f9cf9;
+    --radius:14px; --radius-sm:9px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--font);
+       font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent-2)}
+  .wrap{max-width:1220px;margin:0 auto;padding:28px 22px 80px}
+
+  header.top{display:flex;align-items:center;justify-content:space-between;
+       margin-bottom:8px;flex-wrap:wrap;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:38px;height:38px;border-radius:11px;
+       background:linear-gradient(135deg,var(--accent),var(--accent-2));
+       display:grid;place-items:center;font-weight:700;font-size:18px;color:#fff;
+       box-shadow:0 6px 22px rgba(124,108,255,.35);flex-shrink:0}
+  .brand h1{font-size:18px;margin:0;letter-spacing:-.2px}
+  .brand p{margin:0;color:var(--muted);font-size:12.5px}
+  .mode{font-family:var(--mono);font-size:12px;padding:6px 11px;border-radius:999px;
+       border:1px solid var(--line);background:var(--panel);color:var(--muted);white-space:nowrap}
+  .mode .dot{display:inline-block;width:7px;height:7px;border-radius:50%;
+       background:var(--faint);margin-right:7px;vertical-align:middle}
+  .mode.live .dot{background:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
+  .mode.mock .dot{background:var(--amber);box-shadow:0 0 0 3px var(--amber-bg)}
+
+  .sub{color:var(--muted);font-size:13.5px;margin:2px 0 22px;max-width:760px}
+  .pipe-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+  .pipe-tag{font-size:11.5px;color:var(--faint);border:1px solid var(--line);
+       padding:4px 9px;border-radius:7px;font-family:var(--mono)}
+  .pipe-tag b{color:var(--accent-2);font-weight:600}
+
+  .layout{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
+  @media(max-width:900px){.layout{grid-template-columns:1fr}}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+       padding:18px}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);
+       margin:0 0 14px;font-weight:600}
+
+  label{display:block;font-size:12.5px;color:var(--muted);margin:0 0 5px}
+  input,textarea,select{width:100%;background:var(--panel-2);border:1px solid var(--line);
+       color:var(--txt);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;
+       font-family:inherit;outline:none;transition:border-color .15s}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+  textarea{resize:vertical;min-height:110px;line-height:1.55}
+  .field{margin-bottom:12px}
+  .row{display:flex;gap:10px}.row>.field{flex:1;margin-bottom:0}
+
+  .btn{width:100%;border:none;border-radius:var(--radius-sm);padding:12px;font-size:14.5px;
+       font-weight:600;cursor:pointer;color:#fff;
+       background:linear-gradient(135deg,var(--accent),var(--accent-2));
+       box-shadow:0 6px 20px rgba(124,108,255,.3);transition:transform .08s,opacity .15s}
+  .btn:hover{opacity:.92}.btn:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .btn-sm{padding:7px 12px;font-size:12.5px;font-weight:600;border:none;border-radius:8px;
+       cursor:pointer;color:#fff;background:var(--accent);transition:opacity .15s}
+  .btn-sm:hover{opacity:.85}
+  .btn-copy{background:var(--panel-2);color:var(--muted);border:1px solid var(--line);
+       border-radius:7px;padding:5px 10px;font-size:12px;cursor:pointer;
+       transition:border-color .15s,color .15s;font-family:inherit}
+  .btn-copy:hover{border-color:var(--accent);color:var(--accent-2)}
+  .btn-copy.copied{border-color:var(--green);color:var(--green)}
+
+  .samples{margin-top:18px}
+  .samples .lbl{font-size:12px;color:var(--faint);margin-bottom:8px}
+  .chip{display:block;width:100%;text-align:left;background:var(--panel-2);
+       border:1px solid var(--line);border-radius:var(--radius-sm);padding:9px 11px;
+       margin-bottom:7px;cursor:pointer;color:var(--txt);font-size:12.8px;
+       transition:border-color .15s,background .15s;font-family:inherit}
+  .chip:hover{border-color:var(--accent);background:#222633}
+  .chip small{color:var(--faint);display:block;margin-top:2px;font-size:11px}
+
+  /* results area */
+  #results{display:flex;flex-direction:column;gap:18px}
+  .placeholder{display:grid;place-items:center;text-align:center;color:var(--faint);
+       border:1px dashed var(--line);border-radius:var(--radius);padding:52px 20px;font-size:14px}
+
+  /* stepper */
+  .stepper{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-bottom:14px}
+  .step{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--faint)}
+  .step .num{width:22px;height:22px;border-radius:50%;border:1px solid var(--line);
+       display:grid;place-items:center;font-size:11px;font-family:var(--mono);flex-shrink:0}
+  .step.done .num{background:var(--accent);border-color:var(--accent);color:#fff}
+  .step.done{color:var(--txt)}
+  .step .arrow{color:var(--line);margin:0 10px}
+
+  /* badges */
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .badge{font-size:12px;padding:5px 10px;border-radius:7px;border:1px solid var(--line);
+       background:var(--panel-2);font-family:var(--mono)}
+  .badge b{font-weight:600}
+  .badge .k{color:var(--faint);margin-right:6px}
+
+  /* priority color overrides */
+  .p-urgent{border-color:rgba(229,87,95,.4);background:var(--red-bg)}
+  .p-urgent b{color:var(--red)}
+  .p-high{border-color:rgba(224,162,59,.4);background:var(--amber-bg)}
+  .p-high b{color:var(--amber)}
+  .p-medium b{color:var(--blue)}
+  .p-low b{color:var(--green)}
+  .s-angry b{color:var(--red)}
+  .s-frustrated b{color:var(--amber)}
+  .s-positive b{color:var(--green)}
+
+  /* confidence meter */
+  .meter{height:7px;border-radius:5px;background:var(--panel-2);overflow:hidden;margin-top:5px}
+  .meter > i{display:block;height:100%;border-radius:5px;
+       background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+  .conf-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .conf-row span{font-size:12px;color:var(--muted);min-width:78px}
+  .conf-row .pct{font-family:var(--mono);font-size:12px;color:var(--txt);min-width:38px;text-align:right}
+  .reasoning{font-size:12.5px;color:var(--faint);margin-top:10px;font-style:italic}
+
+  /* retrieval docs */
+  .doc{border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px;margin-bottom:9px;
+       background:var(--panel-2)}
+  .doc:last-child{margin-bottom:0}
+  .doc .dh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:5px}
+  .doc .id{font-family:var(--mono);font-size:11px;color:var(--accent-2);
+       border:1px solid var(--line);padding:2px 7px;border-radius:6px;white-space:nowrap}
+  .doc .title{font-weight:600;font-size:13.5px}
+  .doc .score{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+  .doc .snip{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .doc .bar{height:5px;background:var(--bg);border-radius:4px;margin-top:8px;overflow:hidden}
+  .doc .bar > i{display:block;height:100%;background:var(--blue);border-radius:4px}
+
+  /* decision */
+  .decision{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .action-pill{font-weight:700;font-size:13px;padding:8px 14px;border-radius:9px;white-space:nowrap;
+       text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+  .a-auto{color:var(--green);background:var(--green-bg);border:1px solid rgba(47,191,113,.3)}
+  .a-draft{color:var(--amber);background:var(--amber-bg);border:1px solid rgba(224,162,59,.3)}
+  .a-esc{color:var(--red);background:var(--red-bg);border:1px solid rgba(229,87,95,.3)}
+  .rationale{font-size:13px;color:var(--muted)}
+  .guards{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .guard{font-size:12px;color:var(--red);background:var(--red-bg);border:1px solid rgba(229,87,95,.22);
+       border-radius:7px;padding:6px 10px}
+
+  /* draft reply */
+  .reply-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .reply{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-sm);
+       padding:14px;font-size:13.5px;white-space:pre-wrap;line-height:1.65}
+  .cites{margin-top:10px;font-size:11.5px;color:var(--faint);font-family:var(--mono)}
+  .cites b{color:var(--accent-2)}
+  .escbox{font-size:13px;color:var(--muted);background:var(--panel-2);border:1px dashed var(--line);
+       border-radius:var(--radius-sm);padding:14px}
+  .meta{font-family:var(--mono);font-size:11px;color:var(--faint);text-align:right;
+       padding-top:4px}
+
+  /* ticket history */
+  #history-section{margin-top:36px}
+  #history-section h3{font-size:13px;text-transform:uppercase;letter-spacing:.7px;
+       color:var(--muted);margin:0 0 12px;font-weight:600}
+  .hist-list{display:flex;flex-direction:column;gap:8px}
+  .hist-item{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-sm);
+       padding:11px 14px;cursor:pointer;display:flex;align-items:center;
+       justify-content:space-between;gap:12px;transition:border-color .15s}
+  .hist-item:hover{border-color:var(--accent)}
+  .hist-left{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .hist-subj{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hist-meta{font-size:11.5px;color:var(--faint);font-family:var(--mono)}
+  .hist-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+  .spinner{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--accent);
+       border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--panel);border:1px solid var(--line);
+       border-radius:10px;padding:11px 16px;font-size:13px;color:var(--txt);
+       box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;transform:translateY(8px);
+       transition:opacity .25s,transform .25s;pointer-events:none;z-index:999}
+  .toast.show{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="logo">AI</div>
+      <div>
+        <h1>AI Customer-Support Automation</h1>
+        <p>Classify → Retrieve (RAG) → Agent decision → Draft reply</p>
+      </div>
+    </div>
+    <div id="mode" class="mode"><span class="dot"></span>checking…</div>
+  </header>
+
+  <p class="sub">Paste a support ticket or pick a sample below. The system classifies it with a
+  fast model, retrieves relevant knowledge-base articles via BM25, and a policy-driven agent
+  decides whether to auto-resolve, draft a reply for a human, or escalate — all in one pipeline.</p>
+
+  <div class="pipe-tags">
+    <span class="pipe-tag"><b>1</b> classify · fast model</span>
+    <span class="pipe-tag"><b>2</b> retrieve · BM25 RAG</span>
+    <span class="pipe-tag"><b>3</b> agent · guardrails + policy</span>
+    <span class="pipe-tag"><b>4</b> draft · smart model</span>
+  </div>
+
+  <div class="layout">
+    <!-- INPUT PANEL -->
+    <div>
+      <div class="card">
+        <h2>Incoming ticket</h2>
+        <div class="field">
+          <label for="subject">Subject</label>
+          <input id="subject" placeholder="e.g. Can't log in" />
+        </div>
+        <div class="field">
+          <label for="body">Message</label>
+          <textarea id="body" placeholder="Paste the customer's message here…"></textarea>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="email">Customer email <span style="color:var(--faint)">(optional)</span></label>
+            <input id="email" type="email" placeholder="customer@example.com" />
+          </div>
+          <div class="field">
+            <label for="plan">Plan</label>
+            <select id="plan">
+              <option value="free">Free</option>
+              <option value="pro" selected>Pro</option>
+              <option value="enterprise">Enterprise</option>
+            </select>
+          </div>
+        </div>
+        <button id="run" class="btn">Process ticket</button>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h2>Sample tickets</h2>
+        <div id="samples"><div style="color:var(--faint);font-size:13px">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- RESULTS PANEL -->
+    <div id="results">
+      <div class="placeholder">Submit a ticket to see the full pipeline run.</div>
+    </div>
+  </div>
+
+  <!-- TICKET HISTORY -->
+  <div id="history-section" style="display:none">
+    <h3>Processed tickets <span id="hist-count" style="color:var(--faint);font-weight:400"></span></h3>
+    <div class="hist-list" id="hist-list"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => (s||"").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const pct = x => Math.round((x||0)*100);
+
+const ACTION_META = {
+  auto_resolve: {cls:"a-auto", label:"Auto-resolve"},
+  draft_reply:  {cls:"a-draft",label:"Draft for human"},
+  escalate:     {cls:"a-esc",  label:"Escalate"},
+};
+
+const PRIORITY_CLS = {urgent:"p-urgent",high:"p-high",medium:"p-medium",low:"p-low"};
+const SENTIMENT_CLS = {angry:"s-angry",frustrated:"s-frustrated",positive:"s-positive"};
+
+// ---- in-memory ticket history (newest first) ----
+const history = [];
+
+function toast(msg, duration=2400){
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), duration);
+}
+
+async function loadHealth(){
+  try{
+    const h = await (await fetch('/api/health')).json();
+    const el = $('#mode');
+    const live = h.mode.startsWith('live');
+    el.className = 'mode ' + (live ? 'live':'mock');
+    el.innerHTML = `<span class="dot"></span>${live ? 'LIVE · '+h.provider : 'MOCK MODE'} · ${h.kb_articles} KB articles`;
+  }catch(e){ $('#mode').textContent = 'offline'; }
+}
+
+async function loadSamples(){
+  const box = $('#samples');
+  try{
+    const samples = await (await fetch('/api/samples')).json();
+    box.innerHTML = '';
+    samples.forEach(s=>{
+      const b = document.createElement('button');
+      b.className = 'chip';
+      const hint = (s._expected||'').split('—')[0].trim();
+      b.innerHTML = `${esc(s.subject)}<small>${esc(hint)}</small>`;
+      b.onclick = ()=>{
+        $('#subject').value = s.subject;
+        $('#body').value = s.body;
+        if(s.customer_plan) $('#plan').value = s.customer_plan;
+        run();
+      };
+      box.appendChild(b);
+    });
+  }catch(e){ box.textContent = 'Could not load samples.'; }
+}
+
+function stepperHTML(action){
+  const drafted = action !== 'escalate';
+  return `<div class="stepper">` + [
+    ['1','Classify',true],
+    ['2','Retrieve',true],
+    ['3','Decide',true],
+    ['4','Draft',drafted],
+  ].map((s,i,arr)=>
+    `<div class="step ${s[2]?'done':''}"><span class="num">${s[0]}</span>${s[1]}</div>`+
+    (i<arr.length-1?`<span class="arrow">→</span>`:'')
+  ).join('') + `</div>`;
+}
+
+function render(r){
+  const c = r.classification, d = r.decision;
+  const am = ACTION_META[d.action] || {cls:'',label:d.action};
+  const pcls = PRIORITY_CLS[c.priority] || '';
+  const scls = SENTIMENT_CLS[c.sentiment] || '';
+
+  const classCard = `
+    <div class="card">
+      <h2>1 · Classification</h2>
+      ${stepperHTML(d.action)}
+      <div class="badges">
+        <span class="badge"><span class="k">category</span><b>${esc(c.category)}</b></span>
+        <span class="badge ${pcls}"><span class="k">priority</span><b>${esc(c.priority)}</b></span>
+        <span class="badge ${scls}"><span class="k">sentiment</span><b>${esc(c.sentiment)}</b></span>
+      </div>
+      <div class="conf-row">
+        <span>confidence</span>
+        <div class="meter" style="flex:1"><i style="width:${pct(c.confidence)}%"></i></div>
+        <span class="pct">${pct(c.confidence)}%</span>
+      </div>
+      ${c.reasoning?`<div class="reasoning">"${esc(c.reasoning)}"</div>`:''}
+    </div>`;
+
+  const docs = (r.retrieved||[]).map(doc=>`
+    <div class="doc">
+      <div class="dh">
+        <div style="display:flex;align-items:center;gap:9px;min-width:0">
+          <span class="id">${esc(doc.doc_id)}</span>
+          <span class="title">${esc(doc.title)}</span>
+        </div>
+        <span class="score">score ${doc.score.toFixed(3)}</span>
+      </div>
+      <div class="bar"><i style="width:${pct(doc.score)}%"></i></div>
+      <div class="snip">${esc(doc.snippet)}</div>
+    </div>`).join('') || `<div class="escbox">No relevant articles found.</div>`;
+
+  const retrCard = `
+    <div class="card">
+      <h2>2 · Retrieved knowledge-base articles (BM25)</h2>
+      ${docs}
+    </div>`;
+
+  const guards = (d.triggered_guardrails||[]).map(g=>`<div class="guard">⚠ ${esc(g)}</div>`).join('');
+  const decCard = `
+    <div class="card">
+      <h2>3 · Agent decision</h2>
+      <div class="decision">
+        <span class="action-pill ${am.cls}">${am.label}</span>
+        <div class="rationale">${esc(d.rationale)}</div>
+      </div>
+      ${guards?`<div class="guards">${guards}</div>`:''}
+    </div>`;
+
+  let draftCard;
+  if(r.draft){
+    const cites = (r.draft.cited_doc_ids||[]).map(x=>`<b>${esc(x)}</b>`).join(', ');
+    const title = d.action==='auto_resolve' ? 'Reply sent automatically' : 'Draft reply (awaiting human review)';
+    const draftId = 'draft-'+Date.now();
+    draftCard = `
+      <div class="card">
+        <h2>4 · ${title}</h2>
+        <div class="reply-header">
+          <span style="font-size:12.5px;color:var(--faint)">${r.ticket.customer_email?'To: '+esc(r.ticket.customer_email):''}</span>
+          <button class="btn-copy" onclick="copyReply('${draftId}',this)">Copy reply</button>
+        </div>
+        <div class="reply" id="${draftId}">${esc(r.draft.text)}</div>
+        <div class="cites">grounded in: ${cites||'—'}</div>
+      </div>`;
+  } else {
+    draftCard = `
+      <div class="card">
+        <h2>4 · Escalated — no automated reply drafted</h2>
+        <div class="escbox">This ticket was routed to a human specialist. The system deliberately
+        does not draft an automated reply on escalations so the agent can respond directly and personally.</div>
+      </div>`;
+  }
+
+  const meta = `<div class="meta">mode: ${esc(r.mode)} · ${r.latency_ms} ms · ${new Date().toLocaleTimeString()}</div>`;
+  $('#results').innerHTML = classCard + retrCard + decCard + draftCard + meta;
+}
+
+function copyReply(id, btn){
+  const text = document.getElementById(id)?.innerText || '';
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy reply';btn.classList.remove('copied')}, 2000);
+  });
+}
+
+function addToHistory(r){
+  history.unshift(r);
+  if(history.length > 20) history.pop();
+  renderHistory();
+}
+
+function renderHistory(){
+  const section = $('#history-section');
+  const list = $('#hist-list');
+  if(!history.length){ section.style.display='none'; return; }
+  section.style.display='block';
+  $('#hist-count').textContent = `(${history.length})`;
+  list.innerHTML = history.map((r,i)=>{
+    const am = ACTION_META[r.decision.action] || {cls:'',label:r.decision.action};
+    const pcls = PRIORITY_CLS[r.classification.priority] || '';
+    const ago = timeSince(r._ts);
+    return `<div class="hist-item" onclick="restoreResult(${i})">
+      <div class="hist-left">
+        <div class="hist-subj">${esc(r.ticket.subject||'(no subject)')}</div>
+        <div class="hist-meta">${esc(r.classification.category)} · ${ago}</div>
+      </div>
+      <div class="hist-right">
+        <span class="badge ${pcls}" style="font-size:11px;padding:3px 8px">
+          <b>${esc(r.classification.priority)}</b></span>
+        <span class="action-pill ${am.cls}" style="font-size:11px;padding:5px 10px">${am.label}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function restoreResult(i){
+  render(history[i]);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function timeSince(ts){
+  const s = Math.floor((Date.now()-ts)/1000);
+  if(s<60) return `${s}s ago`;
+  if(s<3600) return `${Math.floor(s/60)}m ago`;
+  return `${Math.floor(s/3600)}h ago`;
+}
+
+async function run(){
+  const subject = $('#subject').value.trim();
+  const body = $('#body').value.trim();
+  if(!subject && !body) return;
+  const btn = $('#run');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Processing…';
+  $('#results').innerHTML = `<div class="placeholder"><span class="spinner"></span>&nbsp; Running the pipeline…</div>`;
+  try{
+    const res = await fetch('/api/process', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        subject,
+        body,
+        customer_email: $('#email').value.trim() || null,
+        customer_plan: $('#plan').value,
+      })
+    });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    data._ts = Date.now();
+    render(data);
+    addToHistory(data);
+    toast('Pipeline complete · ' + data.latency_ms + ' ms');
+  }catch(e){
+    $('#results').innerHTML = `<div class="placeholder" style="color:var(--red)">Error: ${esc(String(e))}</div>`;
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Process ticket';
+  }
+}
+
+$('#run').addEventListener('click', run);
+$('#subject').addEventListener('keydown', e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); run(); } });
+
+loadHealth();
+loadSamples();
+</script>
+</body>
+</html>

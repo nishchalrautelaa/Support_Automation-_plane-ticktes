@@ -1,0 +1,74 @@
+[
+  {
+    "id": "KB-001",
+    "title": "How to reset your password",
+    "content": "If you've forgotten your password, go to the login page and click 'Forgot password'. Enter the email address on your account and we'll send a reset link that is valid for 60 minutes. If the email doesn't arrive within a few minutes, check your spam folder and make sure you're checking the inbox for the address registered to the account. The reset link can only be used once.",
+    "tags": ["password", "login", "reset", "account", "email"]
+  },
+  {
+    "id": "KB-002",
+    "title": "Why was I charged and how billing cycles work",
+    "content": "Subscriptions renew automatically on the same calendar day each month (or each year for annual plans). The charge you see is for the upcoming billing period. You can view every past invoice under Settings → Billing → Invoices, where each line item shows the plan, the period covered, and any proration. If you upgraded mid-cycle, you'll see a prorated charge for the difference.",
+    "tags": ["billing", "charge", "invoice", "subscription", "payment", "renewal"]
+  },
+  {
+    "id": "KB-003",
+    "title": "Requesting a refund",
+    "content": "We offer a full refund within 14 days of the initial purchase of a new subscription. Renewals are eligible for a prorated refund within 7 days of the renewal date. To request a refund, contact support with your account email and the invoice number. Refunds are issued to the original payment method and take 5-10 business days to appear, depending on your bank.",
+    "tags": ["refund", "billing", "money back", "cancel", "invoice"]
+  },
+  {
+    "id": "KB-004",
+    "title": "Upgrading or downgrading your plan",
+    "content": "Go to Settings → Billing → Plan to change your plan. Upgrades take effect immediately and are prorated for the rest of the current billing period. Downgrades take effect at the start of your next billing period so you keep paid features until then. Enterprise plans are handled by our sales team and may require an updated order form.",
+    "tags": ["plan", "upgrade", "downgrade", "billing", "pricing", "enterprise"]
+  },
+  {
+    "id": "KB-005",
+    "title": "Setting up two-factor authentication (2FA)",
+    "content": "Enable 2FA under Settings → Security. We support authenticator apps (TOTP) such as Google Authenticator and Authy, as well as SMS codes. We strongly recommend an authenticator app over SMS. When you enable 2FA you'll be shown backup recovery codes — store them somewhere safe, as they're the only way back in if you lose your device.",
+    "tags": ["2fa", "security", "authentication", "login", "account"]
+  },
+  {
+    "id": "KB-006",
+    "title": "My account is locked",
+    "content": "Accounts are temporarily locked for 30 minutes after five failed login attempts as a security measure. Wait 30 minutes and try again, or reset your password to unlock immediately. If you believe your account was locked due to suspicious activity, contact support right away so we can review recent sign-ins.",
+    "tags": ["account", "locked", "login", "security", "password"]
+  },
+  {
+    "id": "KB-007",
+    "title": "Using the REST API and authentication",
+    "content": "Generate an API key under Settings → Developer → API Keys. Authenticate by sending the key as a Bearer token in the Authorization header. The base URL is https://api.example.com/v1. Default rate limits are 100 requests per minute on Pro and 1000 per minute on Enterprise. Rotate keys regularly and never commit them to source control.",
+    "tags": ["api", "integration", "authentication", "developer", "rate limit", "technical"]
+  },
+  {
+    "id": "KB-008",
+    "title": "Configuring webhooks",
+    "content": "Webhooks let us notify your server when events happen. Add an endpoint under Settings → Developer → Webhooks and choose which events to subscribe to. We sign every payload with an HMAC signature in the X-Signature header so you can verify authenticity. Failed deliveries are retried with exponential backoff for up to 24 hours.",
+    "tags": ["webhook", "api", "integration", "developer", "events", "technical"]
+  },
+  {
+    "id": "KB-009",
+    "title": "Exporting your data",
+    "content": "You can export all of your data at any time under Settings → Data → Export. Exports are generated as a downloadable ZIP of CSV and JSON files and are emailed to you when ready, usually within an hour for large accounts. Exports are available for 7 days. This is useful for backups, migrations, or compliance requests.",
+    "tags": ["data", "export", "backup", "csv", "compliance", "download"]
+  },
+  {
+    "id": "KB-010",
+    "title": "Deleting your account",
+    "content": "To permanently delete your account, go to Settings → Account → Delete Account and confirm. Deletion is irreversible and removes all of your data after a 14-day grace period, during which you can contact support to cancel the deletion. Active paid subscriptions are cancelled automatically; any eligible prorated refund follows the standard refund policy.",
+    "tags": ["account", "delete", "cancel", "data", "privacy"]
+  },
+  {
+    "id": "KB-011",
+    "title": "Troubleshooting sync and connection errors",
+    "content": "If you see sync or connection errors, first check our status page at status.example.com for any ongoing incidents. Then try signing out and back in, clearing your browser cache, or disabling browser extensions that block requests. Most '500' or timeout errors are transient — wait a minute and retry. If errors persist for more than 15 minutes with no incident posted, contact support with a screenshot and the approximate time it started.",
+    "tags": ["error", "sync", "connection", "troubleshooting", "bug", "timeout", "500"]
+  },
+  {
+    "id": "KB-012",
+    "title": "Mobile app: supported devices and offline mode",
+    "content": "Our mobile apps support iOS 16+ and Android 11+. The app caches your recent data so you can keep working offline; changes sync automatically the next time you have a connection. If the app won't open or crashes on launch, update to the latest version from the App Store or Play Store, then restart your device. Offline mode does not support creating new integrations.",
+    "tags": ["mobile", "app", "ios", "android", "offline", "sync", "crash"]
+  }
+]
